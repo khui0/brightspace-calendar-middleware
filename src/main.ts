@@ -51,6 +51,7 @@ app.get("/", async (req: Request, res: Response) => {
           start.add(1, "day").date(),
         ],
         sequence: event.sequence ? Number(event.sequence) : 0,
+        productId: "-//KENNYHUI//NONSGML kennyhui.dev//EN",
       };
 
       transformed.push(newEvent);
