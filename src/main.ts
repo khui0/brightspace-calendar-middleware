@@ -4,7 +4,7 @@ import timezone from "dayjs/plugin/timezone.js";
 import utc from "dayjs/plugin/utc.js";
 import type { Request, Response } from "express";
 import express from "express";
-import { createEvents, type EventAttributes } from "ics";
+import { createEvents, type DateTime, type EventAttributes } from "ics";
 import ical from "node-ical";
 
 dayjs.extend(utc);
@@ -36,18 +36,33 @@ app.get("/", async (req: Request, res: Response) => {
       if (event?.type !== "VEVENT") continue;
 
       const start = dayjs(event.start).tz(TIMEZONE);
+      const end = dayjs(event.end).tz(TIMEZONE);
+
+      const endOfDay: boolean =
+        start.hour() === 23 &&
+        start.minute() === 59 &&
+        end.hour() === 23 &&
+        end.minute() === 59;
+
+      const allDayStart: DateTime = [
+        start.year(),
+        start.month() + 1,
+        start.date(),
+      ];
+
+      const allDayEnd: DateTime = [
+        start.add(1, "day").year(),
+        start.add(1, "day").month() + 1,
+        start.add(1, "day").date(),
+      ];
 
       const newEvent: EventAttributes = {
         title: event.summary.toString() || "",
         description: event.description?.toString() || "",
         location: event.location?.toString() || "",
         uid: event.uid?.toString(),
-        start: [start.year(), start.month() + 1, start.date()],
-        end: [
-          start.add(1, "day").year(),
-          start.add(1, "day").month() + 1,
-          start.add(1, "day").date(),
-        ],
+        start: endOfDay ? allDayStart : start.valueOf(),
+        end: endOfDay ? allDayEnd : end.valueOf(),
         sequence: event.sequence ? Number(event.sequence) : 0,
         productId: "-//KENNYHUI//NONSGML kennyhui.dev//EN",
       };
@@ -62,6 +77,10 @@ app.get("/", async (req: Request, res: Response) => {
       res.status(500);
       return;
     }
+
+    console.log(
+      `[${dayjs().toISOString()}] Generated ICS with ${transformed.length} events`,
+    );
 
     res.setHeader("Content-Type", "text/calendar; charset=utf-8");
     res.setHeader(
