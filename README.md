@@ -16,7 +16,7 @@ services:
     image: ghcr.io/khui0/brightspace-calendar-middleware:latest
     ports:
       - "3000:3000"
-    restart: unless_stopped
+    restart: unless-stopped
     environment:
       - BRIGHTSPACE_URL=YOUR_CALENDAR_URL
 ```
