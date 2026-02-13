@@ -1,6 +1,6 @@
 # Brightspace Calendar Middleware
 
-Docker hostable API endpoint that takes a Brightspace calendar subscription URL and makes each event "all-day" instead of "11:59-11:59"
+Docker hostable API endpoint that takes a Brightspace calendar subscription URL and turns "11:59-11:59" events into "all-day"
 
 ## Why?
 
