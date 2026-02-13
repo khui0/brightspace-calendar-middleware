@@ -19,10 +19,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "25"
+          node-version: "24"
           cache: "npm"
 
       - name: Install Dependencies
@@ -45,6 +51,7 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
