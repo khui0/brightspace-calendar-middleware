@@ -7,8 +7,6 @@ import express from "express";
 import { createEvents, type EventAttributes } from "ics";
 import ical from "node-ical";
 
-process.loadEnvFile();
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
